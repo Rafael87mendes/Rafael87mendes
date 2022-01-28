@@ -1,0 +1,46 @@
+--- Create schema 
+
+CREATE SCHEMA [dolar_Rafael_Mendes]
+
+-- Truncate da tabela stage
+
+truncate table [dolar_Rafael_Mendes].[dolar_stage_RafaelMendes]
+
+--- Create tables
+
+CREATE TABLE  [dolar_Rafael_Mendes].[dolar_stage_RafaelMendes](
+	[cotacaoCompra] [varchar](200) NULL,
+	[cotacaoVenda] [varchar](200) NULL,
+	[dataHoraCotacao] [varchar](200) NULL
+) ON [PRIMARY]
+GO
+
+CREATE TABLE [dolar_Rafael_Mendes].[dolar_final_Rafael_Mendes](
+	[cotacaoCompra] decimal(6,4) NULL,
+	[cotacaoVenda] decimal(6,4) NULL,
+	[dataHoracotacao] datetime NULL
+) ON [PRIMARY]
+GO
+
+-- Create procedure
+
+CREATE or alter PROCEDURE [dolar_Rafael_Mendes].[dolar_convert_Rafael_Mendes]
+AS
+BEGIN
+
+-- Truncate final
+truncate table [dolar_Rafael_Mendes].dolar_final_Rafael_Mendes
+
+-- Inserir dados na tabela final
+
+insert into [dolar_Rafael_Mendes].dolar_final_Rafael_Mendes(cotacaoCompra, cotacaoVenda, dataHoraCotacao)
+select
+CAST(REPLACE(cotacaoCompra,',','.') AS DECIMAL(5,4)),
+CAST(REPLACE(cotacaoVenda,',','.') AS DECIMAL (5,4)),
+CAST(dataHoraCotacao as DATETIME)
+from [dolar_Rafael_Mendes].dolar_stage_RafaelMendes;
+
+end
+GO
+
+
